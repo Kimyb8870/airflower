@@ -14,14 +14,16 @@ router.post("/", ctrl.handleRegisterController);
 // - 기존 등록된 컨트롤러 삭제
 router.delete("/", ctrl.handleDeleteController);
 
+// -- deprecated --
 // 컨트롤러 업데이트
 // - 앱에서 호출
 // - 기존 등록된 컨트롤러 업데이트
-router.patch("/", ctrl.handleUpdateController);
+// router.patch("/", ctrl.handleUpdateController);
 
+// -- deprecated --
 // 컨트롤러 목록 조회
 // - 앱에서 호출
 // - 등록된 컨트롤러 리스트 조회
-router.get("/list", ctrl.handleGetController);
+// router.get("/list", ctrl.handleGetController);
 
 module.exports = router;

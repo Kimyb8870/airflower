@@ -15,6 +15,8 @@ app.use(
   })
 );
 
+app.use(express.json({ extended: true }));
+
 // Express: register routes
 app.use("/action", require("./routes/action"));
 app.use("/controller", require("./routes/controller"));

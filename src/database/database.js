@@ -10,6 +10,7 @@ const pool = mariadb.createPool({
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PW,
   database: process.env.DATABASE_NAME,
+  timezone: "Asia/Seoul",
 });
 
 const startDatabaseConnection = async () => {
@@ -30,6 +31,60 @@ const startDatabaseConnection = async () => {
   }
 };
 
+// System
+
+const updateSystemMode = async (SystemModeUpdateParam) =>
+  await ctrl.updateSystemMode(pool, SystemModeUpdateParam);
+
+const selectCurrentSystem = async () => await ctrl.selectCurrentSystem(pool);
+
+const updateCurrentSystem = async (CurrentSystemUpdateParam) =>
+  await ctrl.updateCurrentSystem(pool, CurrentSystemUpdateParam);
+
+// Action
+
+const insertAction = async (ActionInsertParam) =>
+  await ctrl.insertAction(pool, ActionInsertParam);
+
+const deleteAction = async (ActionDeleteParam) =>
+  await ctrl.deleteAction(pool, ActionDeleteParam);
+
+const selectActionCodeList = async () => await ctrl.selectActionCodeList(pool);
+
+const selectActionQueueList = async () =>
+  await ctrl.selectActionQueueList(pool);
+
+// Controller
+
+const selectControllerWithId = async (ControllerIdParam) =>
+  await ctrl.selectControllerWithId(pool, ControllerIdParam);
+
+const insertController = async (ControllerInsertParam) =>
+  await ctrl.insertController(pool, ControllerInsertParam);
+
+const updateController = async (ControllerUpdateParam) =>
+  await ctrl.updateController(pool, ControllerUpdateParam);
+
+const deleteController = async (ControllerDeleteParam) =>
+  await ctrl.deleteController(pool, ControllerDeleteParam);
+
 module.exports = {
   startDatabaseConnection,
+  systemDB: {
+    updateSystemMode,
+    selectCurrentSystem,
+    updateCurrentSystem,
+  },
+  actionDB: {
+    insertAction,
+    deleteAction,
+    selectActionCodeList,
+    selectActionQueueList,
+  },
+  controllerDB: {
+    selectControllerWithId,
+    insertController,
+    updateController,
+    deleteController,
+  },
 };
