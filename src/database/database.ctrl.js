@@ -241,7 +241,7 @@ const selectActionQueueItemById = async (pool, ActionIdParam) => {
   }
 };
 
-const insertActionLog = async (pool, ActionLogParam) => {
+const insertActionLog = async (pool, ActionLogInsertParam) => {
   const {
     MODE,
     ACTION_TYPE,
@@ -250,10 +250,9 @@ const insertActionLog = async (pool, ActionLogParam) => {
     REQUEST_DATETIME,
     HUMID,
     TEMP,
-  } = ActionLogParam.getParam();
+  } = ActionLogInsertParam.getParam();
 
-  const sql = `INSERT INTO TB_ACTION_LOG (MODE, ACTION_TYPE, CONTROLLER_ID, ACTION_DATETIME, REQUEST_DATETIME, HUMID, TEMP)
-   VALUES("${MODE}", "${ACTION_TYPE}", "${CONTROLLER_ID}", "${ACTION_DATETIME}", "${REQUEST_DATETIME}", "${HUMID}", "${TEMP}");`;
+  const sql = `INSERT INTO TB_ACTION_LOG (MODE, ACTION_TYPE, CONTROLLER_ID, ACTION_DATETIME, REQUEST_DATETIME, HUMID, TEMP) VALUES("${MODE}", "${ACTION_TYPE}", "${CONTROLLER_ID}", "${ACTION_DATETIME}", "${REQUEST_DATETIME}", "${HUMID}", "${TEMP}");`;
 
   let result = null;
 

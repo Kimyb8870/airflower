@@ -63,8 +63,8 @@ const selectActionQueueList = async () =>
 const selectActionQueueItemById = async (ActionIdParam) =>
   await ctrl.selectActionQueueItemById(pool, ActionIdParam);
 
-const insertActionLog = async (ActionLogParam) =>
-  await ctrl.insertActionLog(pool, ActionLogParam);
+const insertActionLog = async (ActionLogInsertParam) =>
+  await ctrl.insertActionLog(pool, ActionLogInsertParam);
 
 // Controller
 
