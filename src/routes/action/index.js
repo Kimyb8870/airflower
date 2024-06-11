@@ -4,10 +4,16 @@ const express = require("express");
 const router = express.Router();
 const ctrl = require("./action.ctrl");
 
+// --deprecated--
 // 액션 등록
 // - 앱에서 호출
 // - 현재 시스템이 preset 모드 또는 manual 모드일 경우 실행할 액션 요청
-router.post("/id", ctrl.handleRegisterAction);
+// router.post("/id", ctrl.handleRegisterAction);
+
+// 액션 리스트 등록
+// - 앱에서 호출
+// - 현재 시스템이 preset 모드 또는 manual 모드일 경우 실행할 액션 요청
+router.post("/list", ctrl.handleRegisterActionList);
 
 // 액션 삭제
 // - 앱에서 호출

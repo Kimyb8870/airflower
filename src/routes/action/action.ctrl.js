@@ -1,13 +1,13 @@
 "use strict";
-const ActionInsertParam = require("../../model/action/ActionInsertParam");
 const ActionDeleteParam = require("../../model/action/ActionDeleteParam");
 const ControllerIdParam = require("../../model/controller/ControllerIdParam");
 const { actionDB, controllerDB } = require("../../database/database");
 const { ApiResponse } = require("../../model/general");
 const util = require("./action.util");
+const ActionInsertListParam = require("../../model/action/ActionInsertListParam");
 
-const handleRegisterAction = async (req, res) => {
-  const { ACTION_TYPE, TIMER } = req.body;
+const handleRegisterActionList = async (req, res) => {
+  const { ACTION_LIST } = req.body;
 
   let apiResponse = null;
 
@@ -25,23 +25,16 @@ const handleRegisterAction = async (req, res) => {
 
   const { CONTROLLER_IP } = selectSqlResult.getData();
 
-  // make random action id for match action queue row after callback finish
-  const ACTION_ID = util.makeUniqueActionId();
-
-  // register setTimeout
-  const SCHEDULE_ID = setTimeout(() => {
-    util.requestActionToController(ACTION_ID, ACTION_TYPE, CONTROLLER_IP);
-  }, util.minToMilisecond(TIMER));
-
-  const actionInsertParam = new ActionInsertParam(
-    ACTION_ID,
-    SCHEDULE_ID,
-    ACTION_TYPE,
-    TIMER
+  const actionInsertListParam = new ActionInsertListParam(
+    ACTION_LIST.map(({ ACTION_TYPE, TIMER }) =>
+      util.makeActionInsertParam(ACTION_TYPE, TIMER, CONTROLLER_IP)
+    )
   );
 
   // insertActionQueue
-  const insertSqlResult = await actionDB.insertAction(actionInsertParam);
+  const insertSqlResult = await actionDB.insertActionList(
+    actionInsertListParam
+  );
 
   if (insertSqlResult.isSuccess()) {
     apiResponse = new ApiResponse(true);
@@ -99,7 +92,7 @@ const handleGetQueueList = async (req, res) => {
 };
 
 module.exports = {
-  handleRegisterAction,
+  handleRegisterActionList,
   handleCancelAction,
   handleGetCodeList,
   handleGetQueueList,

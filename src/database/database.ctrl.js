@@ -100,6 +100,28 @@ const insertAction = async (pool, ActionInsertParam) => {
   }
 };
 
+const insertActionList = async (pool, ActionInsertListParam) => {
+  const sql = ActionInsertListParam.generateInsertSQL();
+  let result = null;
+
+  try {
+    console.log(`[Datbase] - System : insertActionList`);
+    const insertSqlResult = await pool.query(sql);
+    if (
+      insertSqlResult.constructor.name === "OkPacket" &&
+      insertSqlResult.affectedRows === ActionInsertListParam.getLength()
+    ) {
+      result = new SqlResult(true);
+    }
+  } catch (e) {
+    console.error(e.message);
+    result = new SqlResult(false);
+  } finally {
+    console.log(result);
+    return result;
+  }
+};
+
 const deleteAction = async (pool, ActionDeleteParam) => {
   const { ACTION_ID } = ActionDeleteParam.getParam();
   const sql = `DELETE FROM TB_ACTION_QUEUE WHERE ACTION_ID = "${ACTION_ID}";`;
@@ -259,7 +281,8 @@ module.exports = {
   updateSystemMode,
   selectCurrentSystem,
   updateCurrentSystem,
-  insertAction,
+  // insertAction,
+  insertActionList,
   deleteAction,
   selectActionCodeList,
   selectActionQueueList,

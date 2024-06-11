@@ -1,3 +1,5 @@
+const ActionInsertParam = require("../../model/action/ActionInsertParam");
+
 const minToMilisecond = (min) => min * 60 * 1000;
 
 const requestActionToController = async (
@@ -25,8 +27,21 @@ const makeUniqueActionId = () => {
   return randomNumber;
 };
 
+const makeActionInsertParam = (ACTION_TYPE, TIMER, CONTROLLER_IP) => {
+  // make random action id for match action queue row after callback finish
+  const ACTION_ID = makeUniqueActionId();
+
+  // register setTimeout
+  const SCHEDULE_ID = setTimeout(() => {
+    requestActionToController(ACTION_ID, ACTION_TYPE, CONTROLLER_IP);
+  }, minToMilisecond(TIMER));
+
+  return new ActionInsertParam(ACTION_ID, SCHEDULE_ID, ACTION_TYPE, TIMER);
+};
+
 module.exports = {
   minToMilisecond,
   requestActionToController,
   makeUniqueActionId,
+  makeActionInsertParam,
 };

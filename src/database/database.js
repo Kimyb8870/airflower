@@ -43,8 +43,11 @@ const updateCurrentSystem = async (CurrentSystemUpdateParam) =>
 
 // Action
 
-const insertAction = async (ActionInsertParam) =>
-  await ctrl.insertAction(pool, ActionInsertParam);
+// const insertAction = async (ActionInsertParam) =>
+//   await ctrl.insertAction(pool, ActionInsertParam);
+
+const insertActionList = async (ActionInsertListParam) =>
+  await ctrl.insertActionList(pool, ActionInsertListParam);
 
 const deleteAction = async (ActionDeleteParam) =>
   await ctrl.deleteAction(pool, ActionDeleteParam);
@@ -76,7 +79,8 @@ module.exports = {
     updateCurrentSystem,
   },
   actionDB: {
-    insertAction,
+    // insertAction,
+    insertActionList,
     deleteAction,
     selectActionCodeList,
     selectActionQueueList,
