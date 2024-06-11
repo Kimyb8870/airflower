@@ -9,9 +9,6 @@ model.compile({ loss: "categoricalCrossentropy", optimizer: "adam" });
 
 // 모델 업데이트 함수
 async function updateModel(inputs, labels) {
-  console.log(inputs);
-  console.log(labels);
-
   try {
     const inputShape = [inputs.length, 3];
     const labelShape = [labels.length, 3];
