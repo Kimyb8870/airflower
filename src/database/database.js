@@ -41,6 +41,9 @@ const selectCurrentSystem = async () => await ctrl.selectCurrentSystem(pool);
 const updateCurrentSystem = async (CurrentSystemUpdateParam) =>
   await ctrl.updateCurrentSystem(pool, CurrentSystemUpdateParam);
 
+const selectAILearningDataset = async () =>
+  await ctrl.selectAILearningDataset(pool);
+
 // Action
 
 // const insertAction = async (ActionInsertParam) =>
@@ -83,6 +86,7 @@ module.exports = {
     updateSystemMode,
     selectCurrentSystem,
     updateCurrentSystem,
+    selectAILearningDataset,
   },
   actionDB: {
     // insertAction,

@@ -69,6 +69,35 @@ const updateCurrentSystem = async (pool, CurrentSystemUpdateParam) => {
   }
 };
 
+const selectAILearningDataset = async (pool) => {
+  const LIMIT_COUNT = 100;
+  const sql = `SELECT REQUEST_DATETIME, HUMID, TEMP, ACTION_TYPE FROM TB_ACTION_LOG ORDER BY REQUEST_DATETIME DESC LIMIT ${LIMIT_COUNT}`;
+
+  let result = null;
+
+  try {
+    console.log(`[Datbase] - System : selectAILearningDataset`);
+    const selectSqlResult = await pool.query(sql);
+
+    // 시간값 한국시간대로 변경
+    const inputDataset = selectSqlResult.map((row) => [
+      new Date(util.formatUtcTimeOfKorea(row.REQUEST_DATETIME)).getTime(),
+      row.HUMID,
+      row.TEMP,
+    ]);
+
+    const labelDataset = selectSqlResult.map((row) => row.ACTION_TYPE);
+
+    result = new SqlResult(true, "", { inputDataset, labelDataset });
+  } catch (e) {
+    console.error(e.message);
+    result = new SqlResult(false);
+  } finally {
+    console.log(result);
+    return result;
+  }
+};
+
 // Action
 
 const insertAction = async (pool, ActionInsertParam) => {
@@ -219,10 +248,12 @@ const insertActionLog = async (pool, ActionLogParam) => {
     CONTROLLER_ID,
     ACTION_DATETIME,
     REQUEST_DATETIME,
+    HUMID,
+    TEMP,
   } = ActionLogParam.getParam();
 
-  const sql = `INSERT INTO TB_ACTION_LOG (MODE, ACTION_TYPE, CONTROLLER_ID, ACTION_DATETIME, REQUEST_DATETIME)
-   VALUES("${MODE}", "${ACTION_TYPE}", "${CONTROLLER_ID}", "${ACTION_DATETIME}", "${REQUEST_DATETIME}");`;
+  const sql = `INSERT INTO TB_ACTION_LOG (MODE, ACTION_TYPE, CONTROLLER_ID, ACTION_DATETIME, REQUEST_DATETIME, HUMID, TEMP)
+   VALUES("${MODE}", "${ACTION_TYPE}", "${CONTROLLER_ID}", "${ACTION_DATETIME}", "${REQUEST_DATETIME}", "${HUMID}", "${TEMP}");`;
 
   let result = null;
 
@@ -338,16 +369,22 @@ const selectControllerWithId = async (pool, ControllerIdParam) => {
 };
 
 module.exports = {
+  //system
   updateSystemMode,
   selectCurrentSystem,
   updateCurrentSystem,
-  // insertAction,
+  selectAILearningDataset,
+
+  // action
+  // --deprecated--insertAction,
   insertActionList,
   deleteAction,
   selectActionCodeList,
   selectActionQueueList,
   selectActionQueueItemById,
   insertActionLog,
+
+  //controller
   insertController,
   deleteController,
   updateController,

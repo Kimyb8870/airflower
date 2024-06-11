@@ -27,7 +27,8 @@ const requestActionToController = async (
 
   //get current MODE
   const selectCurrentSystemResult = await systemDB.selectCurrentSystem();
-  const { CURRENT_MODE } = selectCurrentSystemResult.getData();
+  const { CURRENT_MODE, CURRENT_HUMID, CURRENT_TEMP } =
+    selectCurrentSystemResult.getData();
 
   const actionDeleteParam = new ActionDeleteParam(actionId);
   await actionDB.deleteAction(actionDeleteParam);
@@ -38,7 +39,9 @@ const requestActionToController = async (
     ACTION_TYPE,
     CONTROLLER_ID,
     ACTION_DATETIME,
-    REQUEST_DATETIME
+    REQUEST_DATETIME,
+    CURRENT_HUMID,
+    CURRENT_TEMP
   );
 
   await actionDB.insertActionLog(actionLogInsertParam);
