@@ -1,4 +1,8 @@
 const ActionInsertParam = require("../../model/action/ActionInsertParam");
+const { systemDB, actionDB } = require("../../database/database");
+const ActionDeleteParam = require("../../model/action/ActionDeleteParam");
+const ActionLogInsertParam = require("../../model/action/ActionLogInsertParam");
+const ActionIdParam = require("../../model/action/ActionIdParam");
 
 const minToMilisecond = (min) => min * 60 * 1000;
 
@@ -12,8 +16,32 @@ const requestActionToController = async (
   console.log(`controller: ${controllerIp}`);
 
   console.log("get response from controller");
-  console.log("delete in TB_ACTION_QUEUE");
-  console.log("insert in TB_ACTION_LOG");
+
+  //get action data from TB_ACTION_QUEUE
+  const actionIdParam = new ActionIdParam(actionId);
+  const actionQueueItem = await actionDB.selectActionQueueItemById(
+    actionIdParam
+  );
+  const { ACTION_TYPE, ACTION_DATETIME, REQUEST_DATETIME } =
+    actionQueueItem.getData();
+
+  //get current MODE
+  const selectCurrentSystemResult = await systemDB.selectCurrentSystem();
+  const { CURRENT_MODE } = selectCurrentSystemResult.getData();
+
+  const actionDeleteParam = new ActionDeleteParam(actionId);
+  await actionDB.deleteAction(actionDeleteParam);
+
+  const CONTROLLER_ID = 1;
+  const actionLogInsertParam = new ActionLogInsertParam(
+    CURRENT_MODE,
+    ACTION_TYPE,
+    CONTROLLER_ID,
+    ACTION_DATETIME,
+    REQUEST_DATETIME
+  );
+
+  await actionDB.insertActionLog(actionLogInsertParam);
 };
 
 const makeUniqueActionId = () => {

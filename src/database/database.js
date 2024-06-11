@@ -57,6 +57,12 @@ const selectActionCodeList = async () => await ctrl.selectActionCodeList(pool);
 const selectActionQueueList = async () =>
   await ctrl.selectActionQueueList(pool);
 
+const selectActionQueueItemById = async (ActionIdParam) =>
+  await ctrl.selectActionQueueItemById(pool, ActionIdParam);
+
+const insertActionLog = async (ActionLogParam) =>
+  await ctrl.insertActionLog(pool, ActionLogParam);
+
 // Controller
 
 const selectControllerWithId = async (ControllerIdParam) =>
@@ -82,8 +88,10 @@ module.exports = {
     // insertAction,
     insertActionList,
     deleteAction,
+    selectActionQueueItemById,
     selectActionCodeList,
     selectActionQueueList,
+    insertActionLog,
   },
   controllerDB: {
     selectControllerWithId,

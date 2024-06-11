@@ -1,5 +1,6 @@
 const moment = require("moment-timezone");
 const { SqlResult } = require("../model/general");
+const util = require("./database.util");
 
 // System
 
@@ -35,10 +36,7 @@ const selectCurrentSystem = async (pool) => {
     const utcTime = selectSqlResult[0].CURRENT_DATETIME;
     const currentMode = {
       ...selectSqlResult[0],
-      CURRENT_DATETIME: moment
-        .utc(utcTime)
-        .tz("Asia/Seoul")
-        .format("YYYY-MM-DD HH:mm:ss"),
+      CURRENT_DATETIME: util.formatUtcTimeOfKorea(utcTime),
     };
 
     result = new SqlResult(true, "", currentMode);
@@ -181,6 +179,68 @@ const selectActionQueueList = async (pool) => {
   }
 };
 
+const selectActionQueueItemById = async (pool, ActionIdParam) => {
+  const { ACTION_ID } = ActionIdParam.getParam();
+  let result = null;
+  const sql = `SELECT * FROM TB_ACTION_QUEUE WHERE ACTION_ID = "${ACTION_ID}"`;
+
+  try {
+    console.log(`[Datbase] - System : selectActionQueueItemById`);
+    const selectSqlResult = await pool.query(sql);
+
+    if (selectSqlResult.length === 1) {
+      let actionItem = selectSqlResult[0];
+      const actionDatetimeUtc = actionItem.ACTION_DATETIME;
+      const requestDatetimeUtc = actionItem.REQUEST_DATETIME;
+
+      actionItem = {
+        ...actionItem,
+        ACTION_DATETIME: util.formatUtcTimeOfKorea(actionDatetimeUtc),
+        REQUEST_DATETIME: util.formatUtcTimeOfKorea(requestDatetimeUtc),
+      };
+
+      result = new SqlResult(true, "", actionItem);
+    } else if (selectSqlResult.length === 0) {
+      result = new SqlResult(true, "no action item found", []);
+    }
+  } catch (e) {
+    console.error(e.message);
+    result = new SqlResult(false);
+  } finally {
+    console.log(result);
+    return result;
+  }
+};
+
+const insertActionLog = async (pool, ActionLogParam) => {
+  const {
+    MODE,
+    ACTION_TYPE,
+    CONTROLLER_ID,
+    ACTION_DATETIME,
+    REQUEST_DATETIME,
+  } = ActionLogParam.getParam();
+
+  const sql = `INSERT INTO TB_ACTION_LOG (MODE, ACTION_TYPE, CONTROLLER_ID, ACTION_DATETIME, REQUEST_DATETIME)
+   VALUES("${MODE}", "${ACTION_TYPE}", "${CONTROLLER_ID}", "${ACTION_DATETIME}", "${REQUEST_DATETIME}");`;
+
+  let result = null;
+
+  try {
+    console.log(`[Datbase] - System : insertActionLog`);
+    const insertSqlResult = await pool.query(sql);
+    if (insertSqlResult.constructor.name === "OkPacket") {
+      result = new SqlResult(true);
+    }
+  } catch (e) {
+    console.error(e.message);
+    result = new SqlResult(false);
+  } finally {
+    console.log(result);
+    return result;
+  }
+};
+
 // Controller
 
 const insertController = async (pool, ControllerInsertParam) => {
@@ -286,6 +346,8 @@ module.exports = {
   deleteAction,
   selectActionCodeList,
   selectActionQueueList,
+  selectActionQueueItemById,
+  insertActionLog,
   insertController,
   deleteController,
   updateController,
