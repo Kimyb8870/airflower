@@ -18,7 +18,7 @@ const handleRegisterAction = async (req, res) => {
     controllerIdParam
   );
   if (!selectSqlResult.isSuccess()) {
-    apiResponse = new ApiResponse(false);
+    apiResponse = new ApiResponse(false, { MESSAGE: "no controller" });
     res.json(apiResponse.getJsonResponse());
     return;
   }
