@@ -10,7 +10,7 @@ const pool = mariadb.createPool({
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PW,
   database: process.env.DATABASE_NAME,
-  timezone: "Asia/Seoul",
+  // timezone: "Asia/Seoul",
 });
 
 const startDatabaseConnection = async () => {
